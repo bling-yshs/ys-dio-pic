@@ -29,10 +29,6 @@ jobs:
           path: ${{ env.CLONE_TEMP_DIR }}
           key: ${{ runner.os }}-clone_temp
 
-      - name: 开启 SSH 服务 (Start SSH service)
-        uses: mxschmitt/action-tmate@v3
-        timeout-minutes: 15
-
       - name: 更新仓库
         working-directory: ${{ env.CLONE_TEMP_DIR }}
         run: git pull
