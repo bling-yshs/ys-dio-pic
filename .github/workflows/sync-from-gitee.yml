@@ -33,7 +33,7 @@ jobs:
         with:
           path: ${{ env.CLONE_TEMP_DIR }}
           key: ${{ runner.os }}-clone_temp-${{ steps.get_remote_sha.outputs.sha }}
-          restore-keys: ${{ runner.os }}-clone_temp-
+          restore-keys: ${{ runner.os }}-clone_temp
 
 
       - name: 更新仓库
