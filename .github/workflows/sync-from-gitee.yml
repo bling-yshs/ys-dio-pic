@@ -33,6 +33,10 @@ jobs:
         uses: mxschmitt/action-tmate@v3
         timeout-minutes: 15
 
+      - name: 更新仓库
+        working-directory: ${{ env.CLONE_TEMP_DIR }}
+        run: git pull
+
       - name: 同步文件
         run: |
           rsync -av --delete --exclude='.git/' "${{ env.CLONE_TEMP_DIR }}/" "${{ env.DESTINATION_FOLDER }}/"
