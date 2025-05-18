@@ -39,6 +39,10 @@ jobs:
 
       - name: 提交并推送
         run: |
-          git add .
-          git commit -m "Sync from Gitee"
-          git push
+         if [[ -n $(git status -s) ]]; then
+           git add .
+           git commit -m "Sync from Gitee"
+           git push
+         else
+           echo "没有需要提交的更改，跳过提交步骤"
+         fi
