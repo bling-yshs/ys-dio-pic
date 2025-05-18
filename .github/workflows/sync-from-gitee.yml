@@ -22,12 +22,19 @@ jobs:
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
 
+      - name: 获取远端最新 commit SHA
+        id: get_remote_sha
+        run: |
+          SHA=$(git ls-remote "${{ env.TARGET_REPO_URL }}" "${{ env.TARGET_REPO_BRANCH }}" | cut -f1)
+          echo "sha=$SHA" >> $GITHUB_OUTPUT
+
       - name: 缓存目标仓库
-        id: cache-target-repo
         uses: actions/cache@v4
         with:
           path: ${{ env.CLONE_TEMP_DIR }}
-          key: ${{ runner.os }}-clone_temp
+          key: ${{ runner.os }}-clone_temp-${{ steps.get_remote_sha.outputs.sha }}
+          restore-keys: ${{ runner.os }}-clone_temp-
+
 
       - name: 更新仓库
         working-directory: ${{ env.CLONE_TEMP_DIR }}
