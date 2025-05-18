@@ -1,0 +1,44 @@
+name: sync-from-gitee
+run-name: 从 gitee 同步
+on:
+  push:
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  sync-from-gitee:
+    runs-on: ubuntu-22.04
+    env:
+      TARGET_REPO_URL: "https://gitee.com/bling_yshs/ys-dio-pic-repo.git" # 目标仓库的URL
+      TARGET_REPO_BRANCH: "master"
+      DESTINATION_FOLDER: "ys-dio-pic-repo"
+      CLONE_TEMP_DIR: "clone-temp"
+    steps:
+      - name: 克隆当前仓库
+        uses: actions/checkout@v4
+
+      - name: 配置 git 用户
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+      - name: 缓存目标仓库
+        id: cache-target-repo
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.CLONE_TEMP_DIR }}
+          key: ${{ runner.os }}-clone_temp
+
+      - name: 开启 SSH 服务 (Start SSH service)
+        uses: mxschmitt/action-tmate@v3
+        timeout-minutes: 15
+
+      - name: 同步文件
+        run: |
+          rsync -av --delete --exclude='.git/' "${{ env.CLONE_TEMP_DIR }}/" "${{ env.DESTINATION_FOLDER }}/"
+
+      - name: 提交并推送
+        run: |
+          git add .
+          git commit -m "Sync from Gitee"
+          git push
